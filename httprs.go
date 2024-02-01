@@ -46,14 +46,14 @@ var _ io.Seeker = (*HttpReadSeeker)(nil)
 
 var (
 	// ErrNoContentLength is returned by Seek when the initial http response did not include a Content-Length header
-	ErrNoContentLength = errors.New("Content-Length was not set")
+	ErrNoContentLength = errors.New("content-Length was not set")
 	// ErrRangeRequestsNotSupported is returned by Seek and Read
 	// when the remote server does not allow range requests (Accept-Ranges was not set)
-	ErrRangeRequestsNotSupported = errors.New("Range requests are not supported by the remote server")
+	ErrRangeRequestsNotSupported = errors.New("range requests are not supported by the remote server")
 	// ErrInvalidRange is returned by Read when trying to read past the end of the file
-	ErrInvalidRange = errors.New("Invalid range")
+	ErrInvalidRange = errors.New("invalid range")
 	// ErrContentHasChanged is returned by Read when the content has changed since the first request
-	ErrContentHasChanged = errors.New("Content has changed since first request")
+	ErrContentHasChanged = errors.New("content has changed since first request")
 )
 
 // NewHttpReadSeeker returns a HttpReadSeeker, using the http.Response and, optionaly, the http.Client
@@ -61,10 +61,10 @@ var (
 // be used.
 //
 // res.Request will be reused for range requests, headers may be added/removed
-func NewHttpReadSeeker(res *http.Response, client ...*http.Client) *HttpReadSeeker {
+func NewHttpReadSeeker(ctx context.Context, res *http.Response, client ...*http.Client) *HttpReadSeeker {
 	r := &HttpReadSeeker{
 		req: res.Request,
-		ctx: res.Request.Context(),
+		ctx: ctx,
 		res: res,
 		r:   res.Body,
 	}

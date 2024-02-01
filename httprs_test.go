@@ -1,6 +1,7 @@
 package httprs
 
 import (
+	"context"
 	"fmt"
 	"io"
 	"net/http"
@@ -88,7 +89,7 @@ func newRSFactory(brokenServer bool) RSFactory {
 			Request:       req,
 			ContentLength: SZ * 4,
 		}
-		return NewHttpReadSeeker(res, &http.Client{Transport: &fakeRoundTripper{src: tmp, downgradeZeroToNoRange: brokenServer}})
+		return NewHttpReadSeeker(context.Background(), res, &http.Client{Transport: &fakeRoundTripper{src: tmp, downgradeZeroToNoRange: brokenServer}})
 	}
 }
 
@@ -108,7 +109,7 @@ func TestHttpWebServer(t *testing.T) {
 			res, err := http.Get(server.URL + "/file")
 			So(err, ShouldBeNil)
 
-			stream := NewHttpReadSeeker(res)
+			stream := NewHttpReadSeeker(context.Background(), res)
 			So(stream, ShouldNotBeNil)
 
 			Convey("Can read 100 bytes from start of file", func() {
